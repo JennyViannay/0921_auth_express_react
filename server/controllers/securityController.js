@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
         const userIsValid = schemaUser.validate({ email, password });
         const userExist = await User.findByEmail(userIsValid.value.email);
         if (userIsValid.error) return res.status(422).json({ error: userIsValid.error.details[0].message });
-        if (userExist) return res.status(409).json({ error: 'Email already exists' });
+        if (userExist) return res.json({ error: 'Email already exists' }).status(409);
         try {
             const hash = bcrypt.hashSync(userIsValid.value.password, saltRounds);
             userIsValid.value.password = hash;
@@ -40,8 +40,8 @@ router.post('/login', async (req, res) => {
         if (userExist) {
             const passwordIsValid = bcrypt.compareSync(userIsValid.value.password, userExist.password);
             if (passwordIsValid) res.status(200).json({ user: userExist });
-            else res.status(401).json({ error: 'Invalid password' });
-        } else res.status(404).json({ error: 'User not found' });
+            else res.json({ error: 'Invalid password' }).status(401);
+        } else res.json({ error: 'User not found' }).status(404);
     } catch (error) {
         res.status(500).json({ message : error.message });
     }

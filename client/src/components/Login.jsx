@@ -6,7 +6,6 @@ export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [isAuth, setIsAuth] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,11 +16,9 @@ export const Login = () => {
                     console.log(data);
                     if (data.error) setError(data.error);
                     else {
-                        console.log(data, "User is successfully logged in");
-                        setIsAuth(true);
-                        setError("");
-                        setEmail("");
-                        setPassword("");
+                        localStorage.setItem("token", data.token);
+                        localStorage.setItem("user", JSON.stringify(data.user));
+                        window.location.href = "/";
                     }
                 })
         } else {
@@ -35,7 +32,6 @@ export const Login = () => {
                 <h2 className="text-center mb-5">Login</h2>
                 <form className="col-lg-6 col-md-6 col-xs-12 mx-auto" onSubmit={handleSubmit}>
                     {error && <p className="alert alert-danger">{error}</p>}
-                    {isAuth && <p className="alert alert-success">User Is Successfully Logged In</p>}
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>
                         <input type="text" className="form-control" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />

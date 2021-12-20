@@ -6,6 +6,7 @@ export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isAuth, setIsAuth] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -13,32 +14,39 @@ export const Login = () => {
             const user = { email: email, password: password };
             axios.post(url, user)
                 .then(({ data }) => {
+                    console.log(data);
                     if (data.error) setError(data.error);
                     else {
                         console.log(data, "User is successfully logged in");
+                        setIsAuth(true);
                         setError("");
                         setEmail("");
                         setPassword("");
                     }
                 })
+        } else {
+            setError("Please enter email and password");
         }
     }
 
     return (
-        <div className="row">
-            <h2 className="text-center">Login</h2>
-            <form className="col-md-4 col-md-offset-4" onSubmit={handleSubmit}>
-                {error && <p className="text-danger">{error}</p>}
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <button type="submit">Register</button>
-            </form>
+        <div className="container bg-primary text-white">
+            <div className="row text-center p-5">
+                <h2 className="text-center mb-5">Login</h2>
+                <form className="col-lg-6 col-md-6 col-xs-12 mx-auto" onSubmit={handleSubmit}>
+                    {error && <p className="alert alert-danger">{error}</p>}
+                    {isAuth && <p className="alert alert-success">User Is Successfully Logged In</p>}
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input type="text" className="form-control" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="password" className="form-label">Password</label>
+                        <input type="password" className="form-control" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    </div>
+                    <button type="submit" className="btn btn-warning">Login</button>
+                </form>
+            </div>
         </div>
     )
 }

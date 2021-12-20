@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 
 const router = express.Router(); 
 const saltRounds = 10;
+
 const schemaUser = Joi.object({
     email: Joi.string().email().required().trim(true),
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required().trim(true),
@@ -36,6 +37,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const userIsValid = schemaUser.validate({ email, password });
+        if (userIsValid.error) return res.status(422).json({ error: userIsValid.error.details[0].message });
         const userExist = await User.findByEmail(userIsValid.value.email);
         if (userExist) {
             const passwordIsValid = bcrypt.compareSync(userIsValid.value.password, userExist.password);
